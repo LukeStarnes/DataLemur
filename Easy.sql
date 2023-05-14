@@ -36,3 +36,23 @@ FROM
   WHERE tweet_date BETWEEN '2022-01-01' AND '2022-12-31'
   GROUP BY user_id) AS total_tweets
 GROUP BY NumberOfTweetsPerUser
+
+--Assume you're given the table on user viewership categorised by device type where the three types are laptop, tablet, and phone.
+--Write a query that calculates the total viewership for laptops and mobile devices where mobile is defined as the sum of tablet and phone viewership. 
+--Output the total viewership for laptops as laptop_reviews and the total viewership for mobile devices as mobile_views.
+SELECT 
+COUNT(*) FILTER (WHERE device_type = 'laptop') AS laptop_views,
+COUNT(*) FILTER (WHERE device_type IN ('tablet','phone')) AS mobile_views
+FROM viewership 
+
+--Assume you are given the table below that shows job postings for all companies on the LinkedIn platform. 
+--Write a query to get the number of companies that have posted duplicate job listings.
+----Clarification:
+----Duplicate job listings refer to two jobs at the same company with the same title and description.
+WITH t1 AS
+(SELECT company_id, title, description, count(*) AS job_count 
+FROM job_listings
+GROUP BY company_id, title, description)
+SELECT count(*) AS co_w_duplicate_jobs 
+FROM t1 
+WHERE job_count > 1
