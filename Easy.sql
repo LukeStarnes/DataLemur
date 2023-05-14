@@ -56,3 +56,22 @@ GROUP BY company_id, title, description)
 SELECT count(*) AS co_w_duplicate_jobs 
 FROM t1 
 WHERE job_count > 1
+
+--Given a table of Facebook posts, for each user who posted at least twice in 2021, write a query to find the number of days between each user’s first post of the year and last post of the year in the year 2021. 
+--Output the user and number of the days between each user's first and last post.
+SELECT user_id, max(post_date)::date - min(post_date)::date AS days_between
+FROM posts
+WHERE DATE_PART('year', post_date::DATE) = 2021 
+GROUP BY user_id
+HAVING Count(*) > 1
+
+--Write a query to identify the top 2 Power Users who sent the highest number of messages on Microsoft Teams in August 2022. 
+--Display the IDs of these 2 users along with the total number of messages they sent. Output the results in descending order based on the count of the messages.
+----Assumption:
+----No two users have sent the same number of messages in August 2022.
+SELECT sender_id, count(*) AS message_count 
+FROM messages
+WHERE EXTRACT(MONTH FROM sent_date) = '8' AND EXTRACT(YEAR FROM sent_date) = '2022'
+GROUP BY sender_id
+ORDER BY message_count DESC
+LIMIT 2
