@@ -75,3 +75,42 @@ WHERE EXTRACT(MONTH FROM sent_date) = '8' AND EXTRACT(YEAR FROM sent_date) = '20
 GROUP BY sender_id
 ORDER BY message_count DESC
 LIMIT 2
+
+--Assume you're given the tables containing completed trade orders and user details in a Robinhood trading system.
+--Write a query to retrieve the top three cities that have the highest number of completed trade orders listed in descending order. 
+--Output the city name and the corresponding number of completed trade orders.
+SELECT users.city, count(*) AS total_orders
+FROM trades
+JOIN users
+ON trades.user_id = users.user_id
+WHERE trades.status = 'Completed'
+GROUP BY users.city
+ORDER BY total_orders DESC
+LIMIT 3
+
+--Given the reviews table, write a query to retrieve the average star rating for each product, grouped by month. 
+--The output should display the month as a numerical value, product ID, and average star rating rounded to two decimal places. 
+--Sort the output first by month and then by product ID.
+SELECT 
+  EXTRACT(MONTH FROM submit_date) AS mth,
+  product_id,
+  ROUND(AVG(stars), 2) AS avg_stars
+FROM reviews
+GROUP BY 
+  EXTRACT(MONTH FROM submit_date), 
+  product_id
+ORDER BY mth, product_id;
+
+--Assume you have an events table on Facebook app analytics. 
+--Write a query to calculate the click-through rate (CTR) for the app in 2022 and round the results to 2 decimal places.
+----Definition and note:
+----Percentage of click-through rate (CTR) = 100.0 * Number of clicks / Number of impressions
+----To avoid integer division, multiply the CTR by 100.0, not 100.
+SELECT app_id, 
+ROUND(100.0 
+* SUM(CASE WHEN event_type = 'click' THEN 1 ELSE 0 END)
+/ SUM(CASE WHEN event_type = 'impression' THEN 1 ELSE 0 END)
+,2) AS ctr_rate
+FROM events
+WHERE timestamp >= '2022-01-01' AND timestamp < '2023-01-01'
+GROUP BY app_id
