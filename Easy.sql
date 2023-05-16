@@ -127,3 +127,16 @@ JOIN texts
 ON emails.email_id = texts.email_id
 WHERE signup_action = 'Confirmed'
 AND texts.action_date = emails.signup_date + INTERVAL '1 day'
+
+-- Your team at JPMorgan Chase is soon launching a new credit card, and to gain some context, you are analyzing how many credit cards were issued each month.
+--Write a query that outputs the name of each credit card and the difference in issued amount between the month with the most cards issued, 
+--and the least cards issued. Order the results according to the biggest difference.
+SELECT card_name, MAX(issued_amount) - MIN(issued_amount) AS difference
+FROM monthly_cards_issued
+GROUP BY card_name
+ORDER BY difference DESC
+
+--You're trying to find the mean number of items per order on Alibaba, rounded to 1 decimal place using tables which includes information on the count of items in each order (item_count table) 
+--and the corresponding number of orders for each item count (order_occurrences table).
+SELECT ROUND(SUM(order_occurrences*1.0 * item_count)/sum(order_occurrences),1)
+FROM items_per_order;
