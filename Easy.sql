@@ -140,3 +140,36 @@ ORDER BY difference DESC
 --and the corresponding number of orders for each item count (order_occurrences table).
 SELECT ROUND(SUM(order_occurrences*1.0 * item_count)/sum(order_occurrences),1)
 FROM items_per_order;
+
+--CVS Health is analyzing its pharmacy sales data, and how well different products are selling in the market. Each drug is exclusively manufactured by a single manufacturer.
+--Write a query to identify the manufacturers associated with the drugs that resulted in losses for CVS Health and calculate the total amount of losses incurred.
+--Output the manufacturer's name, the number of drugs associated with losses, and the total losses in absolute value. 
+--Display the results sorted in descending order with the highest losses displayed at the top.
+SELECT manufacturer, 
+COUNT(*) AS drug_count, 
+ABS(SUM(total_sales - cogs)) AS total_loss
+FROM pharmacy_sales
+WHERE total_sales - cogs <= 0
+GROUP BY manufacturer
+ORDER BY total_loss DESC
+
+--CVS Health is trying to better understand its pharmacy sales, and how well different products are selling.
+--Write a query to find the total drug sales for each manufacturer. 
+--Round your answer to the closest million, and report your results in descending order of total sales.
+--Because this data is being directly fed into a dashboard which is being seen by business stakeholders, format your result like this: "$36 million".
+SELECT manufacturer, 
+CONCAT( '$', ROUND(SUM(total_sales) / 1000000), ' million') AS sales_mil 
+FROM pharmacy_sales 
+GROUP BY manufacturer 
+ORDER BY SUM(total_sales) DESC;
+
+--UnitedHealth has a program called Advocate4Me, which allows members to call an advocate and receive support for their health care needs 
+-- – whether that's behavioural, clinical, well-being, health care financing, benefits, claims or pharmacy help.
+Write a query to find how many UHG members made 3 or more calls. case_id column uniquely identifies each call made.
+WITH CTE AS (
+SELECT policy_holder_id, count(*) AS calls
+FROM callers
+GROUP BY policy_holder_id
+HAVING count(*) >= 3)
+SELECT count(*) AS member_count
+FROM CTE
